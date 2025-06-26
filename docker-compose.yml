@@ -1,0 +1,32 @@
+version: '3.8'
+
+services:
+  grafana-reporter:
+    image: ghcr.io/notyusta/grafana-reporter
+    container_name: grafana-reporter
+    ports:
+      - "8686:8686"  # Web server port
+    environment:
+      # Mode: Set to 1 for command-line mode
+      CMD_ENABLE: "0"
+
+      # Web server mode settings
+      GRAFANA_HOST: "192.168.18.102:3000"
+      HTTP_PORT: ":8686"
+      GRAFANA_PROTO: "http://"
+      GRAFANA_SSL_CHECK: "false"
+      GRAFANA_TEMPLATE_DIR: "templates/"
+
+      # Command-line mode (only used if CMD_ENABLE=1)
+      CMD_API_KEY: "your-grafana-api-key"
+      CMD_API_VERSION: "v5"
+      CMD_DASHBOARD: "dashboard_uid"
+      CMD_OUTPUT: "out.pdf"
+      CMD_TS: "from=now-6h&to=now"
+      CMD_TEMPLATE: "/templates/custom.tmpl"  # optional
+
+    volumes:
+      - ./templates:/templates  # Mount custom LaTeX templates if needed
+      - ./output:/output        # Save output.pdf here if in CMD mode
+
+    restart: unless-stopped
